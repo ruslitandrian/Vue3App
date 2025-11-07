@@ -48,15 +48,17 @@ docker compose down
 ```
 
 ## Image Contents
-- Build stage: Node 18 Alpine builds Vite assets to `dist/` using `npm ci` and `npm run build`.
+- Build stage: Node 18 Alpine installs dependencies with `npm ci` and runs `npm run build` to emit `dist/` assets.
 - Runtime stage: Nginx 1.27 Alpine serves static files from `/usr/share/nginx/html`.
-- SPA routing enabled via `nginx.conf` using `try_files $uri $uri/ /index.html;`.
+- `nginx.conf` enables SPA routing with `try_files $uri $uri/ /index.html;` **and** proxies `/api/` traffic to `http://52.194.223.195:8000` by default.
+- Update the upstream host in `nginx.conf` before deploying if your backend lives elsewhere.
 
 ## Common Customizations
 - Change host port (e.g., 3000):
   - Docker: `-p 3000:80`
   - Compose: edit `docker-compose.yml` → `ports: ["3000:80"]`
 - Static asset caching headers are set in `nginx.conf`. Adjust as needed.
+- API proxy settings live in `nginx.conf`; change `proxy_pass` to match your backend service.
 
 ## Development vs Production
 - This image is optimized for production (static build + Nginx).

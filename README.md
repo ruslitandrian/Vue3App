@@ -53,18 +53,33 @@ npm run test
 │  ├─ App.vue
 │  ├─ assets/
 │  │  └─ base.css
+│  ├─ components/
+│  │  ├─ AddEditArticleModal.vue
+│  │  ├─ ProductDetailModal.vue
+│  │  └─ SeenInModal.vue
+│  ├─ data/
+│  │  └─ products.ts
 │  ├─ router/
 │  │  └─ index.ts
+│  ├─ services/
+│  │  └─ blogApi.ts
 │  ├─ stores/
 │  │  └─ counter.ts
+│  ├─ types/
+│  │  ├─ blog.ts
+│  │  └─ product.ts
 │  └─ views/
+│     ├─ AboutView.vue
+│     ├─ BlogsView.vue
 │     ├─ HomeView.vue
-│     └─ AboutView.vue
+│     └─ UsersView.vue
 ```
 
 ## Routing (`src/router/index.ts`)
-- **`/` → `HomeView.vue`**: Home page
-- **`/about` → `AboutView.vue`**: About page with lazy loading
+- **`/` → `HomeView.vue`**: Product gallery with modal detail views
+- **`/about` → `AboutView.vue`**: Lazily loaded About page
+- **`/users` → `UsersView.vue`**: CRUD UI that talks to `/api/users`
+- **`/blogs` → `BlogsView.vue`**: Article management UI backed by `blogApi`
 
 ```ts
 // Key snippet
@@ -77,6 +92,16 @@ routes: [
 ## State Management (`src/stores/counter.ts`)
 - Uses **Pinia** to create a simple counter store as an example for extending app state.
 - Enabled in `src/main.ts` with `app.use(createPinia())`.
+
+## Services (`src/services/blogApi.ts`)
+- Wraps `fetch` calls to the `/api/blogs` backend with helpers that normalise Laravel-style response envelopes.
+- Supports listing with search/sort/pagination plus create, update, delete, status toggling, and order updates.
+- Relies on the Vite proxy (`/api`) so it works in development without CORS issues.
+
+## Views Overview
+- **HomeView**: Displays static product data (`src/data/products.ts`) and opens `ProductDetailModal` and `SeenInModal` components.
+- **UsersView**: Directly calls `/api/users` endpoints for CRUD operations, handling validation errors and optimistic UI states.
+- **BlogsView**: Uses `blogApi` for article management, including debounced search, pagination, sorting, and modal-driven create/edit flows.
 
 ## App Entry (`src/main.ts`)
 - Creates the Vue app and mounts it to `#app`.
@@ -101,6 +126,11 @@ export default defineConfig({
 ```
 - Run: `npm run test`
 
+## Development Server (`vite.config.ts`)
+- Adds a Content-Security-Policy header in dev mode so libraries that rely on `eval` keep working while you integrate stricter CSP later.
+- Proxies `/api` requests to `http://localhost:8000`, allowing the Vue app to talk to the backend without additional CORS configuration.
+- Update the proxy target if your API runs elsewhere.
+
 ## Code Style
 - Use **ESLint** and **Prettier** to maintain consistent code style.
 - Config files in the root: `.eslintrc.cjs`, `.prettierrc`, `.prettierignore`.
@@ -111,6 +141,7 @@ export default defineConfig({
 - Basic steps:
   - `npm run build`
   - Upload or point your static host to `dist/`.
+- This repo ships with an Nginx config (`nginx.conf`) that also proxies `/api/` to `http://52.194.223.195:8000`. Change the upstream host before deploying to your own infrastructure.
 
 ## FAQ
 - If the dev server fails to start or the build errors out, ensure your Node version is 18+ and reinstall dependencies:
