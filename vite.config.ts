@@ -17,7 +17,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         // Target URL for the proxy
-        target: 'http://localhost:8000',
+        target: 'http://52.194.223.195:8000',
         // Enable changeOrigin to allow cross-origin requests
         changeOrigin: true,
         // Disable secure protocol for the proxy
