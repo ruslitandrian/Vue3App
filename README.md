@@ -1,0 +1,123 @@
+# Vue 3 + Vite + TypeScript Project
+
+An example project built with Vue 3 + TypeScript using Vite. It integrates Vue Router, Pinia for state management, ESLint, Prettier, and Vitest for testing.
+
+## Features and Tech Stack
+- **Framework**: `vue@^3.5.12`
+- **Build Tool**: `vite@^5.4.10`
+- **Language**: `typescript@^5.6.3`
+- **Routing**: `vue-router@^4.4.5`
+- **State Management**: `pinia@^2.2.6`
+- **Testing**: `vitest@^2.1.3` (with `jsdom` environment)
+- **Code Quality**: `eslint@^9.12.0`, `eslint-plugin-vue@^9.30.0`, `@vue/eslint-config-typescript`, `@vue/eslint-config-prettier`, `prettier@^3.3.3`
+
+## Requirements
+- Recommended **Node.js 18+** (compatible with Vite 5)
+- Use `npm` as the package manager (`package-lock.json` included)
+
+## Quick Start
+```bash
+# Install dependencies
+npm install
+
+# Start dev server (default at http://localhost:5173)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build locally (requires prior build)
+npm run preview
+
+# Lint (ESLint)
+npm run lint
+
+# TypeScript type check
+npm run type-check
+
+# Unit tests (Vitest)
+npm run test
+```
+
+## Project Structure
+```
+├─ index.html
+├─ package.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+├─ vite.config.ts
+├─ vitest.setup.ts
+├─ env.d.ts
+├─ src/
+│  ├─ main.ts
+│  ├─ App.vue
+│  ├─ assets/
+│  │  └─ base.css
+│  ├─ router/
+│  │  └─ index.ts
+│  ├─ stores/
+│  │  └─ counter.ts
+│  └─ views/
+│     ├─ HomeView.vue
+│     └─ AboutView.vue
+```
+
+## Routing (`src/router/index.ts`)
+- **`/` → `HomeView.vue`**: Home page
+- **`/about` → `AboutView.vue`**: About page with lazy loading
+
+```ts
+// Key snippet
+routes: [
+  { path: '/', name: 'home', component: HomeView },
+  { path: '/about', name: 'about', component: () => import('../views/AboutView.vue') }
+]
+```
+
+## State Management (`src/stores/counter.ts`)
+- Uses **Pinia** to create a simple counter store as an example for extending app state.
+- Enabled in `src/main.ts` with `app.use(createPinia())`.
+
+## App Entry (`src/main.ts`)
+- Creates the Vue app and mounts it to `#app`.
+- Registers **Pinia** and **Vue Router**.
+- Imports global styles from `src/assets/base.css`.
+
+```ts
+const app = createApp(App)
+app.use(createPinia())
+app.use(router)
+app.mount('#app')
+```
+
+## Testing (Vitest)
+- Configure the test environment as `jsdom` in `vite.config.ts`:
+```ts
+// vite.config.ts
+export default defineConfig({
+  plugins: [vue()],
+  test: { environment: 'jsdom' }
+})
+```
+- Run: `npm run test`
+
+## Code Style
+- Use **ESLint** and **Prettier** to maintain consistent code style.
+- Config files in the root: `.eslintrc.cjs`, `.prettierrc`, `.prettierignore`.
+- Recommended before committing: `npm run lint` and `npm run type-check`.
+
+## Deployment
+- After building with Vite, the `dist/` static assets can be deployed to any static host (e.g., Nginx, Vercel, Netlify, GitHub Pages).
+- Basic steps:
+  - `npm run build`
+  - Upload or point your static host to `dist/`.
+
+## FAQ
+- If the dev server fails to start or the build errors out, ensure your Node version is 18+ and reinstall dependencies:
+```bash
+rm -rf node_modules package-lock.json  # Delete manually on Windows if needed
+npm install
+```
+
+## License
+This example project does not specify a license. If you plan to publish it, add a suitable License as needed.
